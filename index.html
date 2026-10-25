@@ -73,6 +73,9 @@
   h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,8vw,46px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:.01em}
   .hebrew{font-family:var(--hebrew);font-weight:500;font-size:clamp(22px,5.5vw,28px);margin:10px 0 0;color:var(--gold-bright);direction:rtl}
   .mission{font-family:var(--body);font-size:16px;line-height:1.7;max-width:46ch;margin:20px auto 0;color:rgba(243,239,226,.86);font-style:italic}
+  .haskama{font-family:var(--body);font-size:12.5px;line-height:1.6;max-width:44ch;margin:16px auto 0;color:rgba(243,239,226,.66)}
+  .haskama b{color:rgba(243,239,226,.9);font-weight:600}
+  .trust{text-align:center;color:var(--muted);font-size:12px;line-height:1.6;margin:14px auto 0;max-width:44ch}
 
   /* Giving card */
   main{padding-block:0 56px}
@@ -89,6 +92,19 @@
   .freq button+button{border-left:1px solid var(--chip-line)}
   .freq button[aria-pressed="true"]{background:var(--pine);color:var(--pine-ink);font-weight:500}
   .freq button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+  .tiers{display:flex;flex-direction:column;gap:10px}
+  .tier{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:var(--chip);border:1px solid var(--chip-line);border-radius:3px;padding:14px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;font-family:var(--body)}
+  .tier:hover{border-color:var(--gold)}
+  .tier[aria-pressed="true"]{border-color:var(--pine);box-shadow:inset 0 0 0 1px var(--pine);background:var(--surface)}
+  .tier:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .tier-info{min-width:0}
+  .tier-title{display:block;font-family:var(--display);font-size:16px;color:var(--ink);line-height:1.2}
+  .tier-sub{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+  .tier-amt{flex:0 0 auto;font-family:var(--display);font-size:18px;color:var(--pine);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tier-amt small{font-size:11px;color:var(--muted);font-weight:normal}
+  @media (prefers-color-scheme:dark){.tier-amt{color:var(--gold-bright)}}
+  .any-note{color:var(--muted);font-size:12px;text-align:center;margin:10px 2px 0;line-height:1.5}
 
   .amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
   .chip{font-family:var(--display);font-size:20px;color:var(--ink);background:var(--chip);border:1px solid var(--chip-line);border-radius:3px;padding:16px 8px;cursor:pointer;transition:border-color .15s,background .15s,color .15s,box-shadow .15s;font-variant-numeric:tabular-nums;line-height:1}
@@ -187,7 +203,8 @@
     </div>
     <p class="kicker">A Network of Torah</p>
     <h1>Aitz Chaim Kollel Network</h1>
-    <p class="mission">Supporting over fifty avreichim in full-day Torah study across our batei midrash in Beitar Illit and Beit Shemesh.</p>
+    <p class="mission">Over fifty avreichim in full-day Torah study across our batei midrash in Beitar Illit and Beit Shemesh, under Rabbi Yisroel Meir Jaeger, Rosh Kollel.</p>
+    <p class="haskama">With the warm brachos of <b>HaRav Elimelech Kornfeld</b> (from the Rabbanim of Beit Shemesh) and <b>HaRav Chaim Weiss</b> (Rav of Beitar Illit).</p>
   </div>
 </div>
 
@@ -206,20 +223,32 @@
           <button type="button" data-freq="month" aria-pressed="false">Monthly</button>
         </div>
 
-        <span class="field-label" id="amtLabel">Partnership amount (USD)</span>
-        <div class="amounts" role="group" aria-labelledby="amtLabel">
-          <button type="button" class="chip" data-amt="36">$36</button>
-          <button type="button" class="chip" data-amt="54">$54</button>
-          <button type="button" class="chip" data-amt="100">$100</button>
-          <button type="button" class="chip" data-amt="180" aria-pressed="true">$180</button>
-          <button type="button" class="chip" data-amt="360">$360</button>
-          <button type="button" class="chip" data-amt="1800">$1,800</button>
+        <span class="field-label" id="tierLabel">Choose your partnership</span>
+        <div class="tiers" role="group" aria-labelledby="tierLabel">
+          <button type="button" class="tier" data-year="1800" data-month="150" aria-pressed="true">
+            <span class="tier-info"><span class="tier-title">An hour of daily learning</span><span class="tier-sub">of one avreich, for a year</span></span>
+            <span class="tier-amt"></span>
+          </button>
+          <button type="button" class="tier" data-year="3600" data-month="300">
+            <span class="tier-info"><span class="tier-title">A morning seder</span><span class="tier-sub">of one avreich, for a year</span></span>
+            <span class="tier-amt"></span>
+          </button>
+          <button type="button" class="tier" data-year="6000" data-month="500">
+            <span class="tier-info"><span class="tier-title">A full avreich</span><span class="tier-sub">a year of his Torah learning</span></span>
+            <span class="tier-amt"></span>
+          </button>
+          <button type="button" class="tier" data-year="12000" data-month="1000">
+            <span class="tier-info"><span class="tier-title">A chavrusa</span><span class="tier-sub">two avreichim, for a year</span></span>
+            <span class="tier-amt"></span>
+          </button>
         </div>
 
+        <span class="field-label" id="amtLabel">Or another amount (USD)</span>
         <div class="custom-wrap">
           <span class="cur">$</span>
           <input id="custom" inputmode="decimal" autocomplete="off" placeholder="Other amount" aria-label="Enter a custom amount in US dollars">
         </div>
+        <p class="any-note">Every amount is a cherished partnership in Torah.</p>
 
         <a class="donate" id="donateBtn" href="https://secure.cardknox.com/baisshalom?xcustom04=Aitz%20Chaim%20Kollel%20Network" target="_blank" rel="noopener noreferrer">
           <svg class="lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -282,6 +311,7 @@
     </section>
 
     <p class="note">You'll be taken to our secure payment page to complete your partnership. A tax-deductible receipt is emailed to you once it's processed.</p>
+    <p class="trust">A US tax-deductible 501(c)(3) · Congregation Bais Shalom · EIN 46-4301263</p>
   </div>
 </main>
 
@@ -301,62 +331,75 @@
   var CAMPAIGN = "Aitz Chaim Kollel Network";
   // Where Cardknox returns the donor after a successful payment (your hosted thank-you page).
   var THANK_YOU_URL = "https://7667456-spec.github.io/thank-you.html";
-  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  var tiers = Array.prototype.slice.call(document.querySelectorAll(".tier"));
   var freqBtns = Array.prototype.slice.call(document.querySelectorAll(".freq button"));
   var custom = document.getElementById("custom");
   var btn = document.getElementById("donateBtn");
   var label = document.getElementById("donateLabel");
 
-  var currentAmount = 180;
   var currentFreq = "once";   // "once" or "month"
+  var selectedTier = document.querySelector('.tier[aria-pressed="true"]');
 
   function fmt(n){ return "$" + Number(n).toLocaleString("en-US"); }
+  function tierAmount(t){ return currentFreq === "month" ? parseFloat(t.dataset.month) : parseFloat(t.dataset.year); }
+  var currentAmount = selectedTier ? tierAmount(selectedTier) : 0;
+
+  function renderTierAmts(){
+    tiers.forEach(function(t){
+      t.querySelector(".tier-amt").innerHTML = fmt(tierAmount(t)) + "<small>/" + (currentFreq === "month" ? "mo" : "yr") + "</small>";
+    });
+  }
 
   function build(){
     var url = BASE + "?xcustom04=" + encodeURIComponent(CAMPAIGN);
     if (currentAmount > 0) url += "&xAmount=" + currentAmount;
     if (currentFreq === "month"){
-      // Cardknox recurring: monthly, every 1 month, open-ended
       url += "&xEnableRecurring=1&xIntervalType=Month&xIntervalCount=1";
     }
-    // Return the donor to the thank-you page, which alerts the kollel.
     if (THANK_YOU_URL && THANK_YOU_URL.indexOf("example.com") === -1){
       url += "&xRedirectURL=" + encodeURIComponent(THANK_YOU_URL);
     }
     btn.href = url;
-    if (currentAmount > 0){
-      label.textContent = "Partner · " + fmt(currentAmount) + (currentFreq === "month" ? " / month" : "");
-    } else {
-      label.textContent = "Continue";
-    }
+    label.textContent = currentAmount > 0
+      ? ("Partner · " + fmt(currentAmount) + (currentFreq === "month" ? " / month" : ""))
+      : "Continue";
   }
 
   freqBtns.forEach(function(b){
     b.addEventListener("click", function(){
       freqBtns.forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
       currentFreq = b.dataset.freq;
+      renderTierAmts();
+      if (selectedTier){
+        currentAmount = tierAmount(selectedTier);
+      } else {
+        var v = parseFloat((custom.value || "").replace(/[^0-9.]/g, ""));
+        currentAmount = (!isNaN(v) && v > 0) ? Math.round(v * 100) / 100 : 0;
+      }
       build();
     });
   });
 
-  chips.forEach(function(chip){
-    chip.addEventListener("click", function(){
-      chips.forEach(function(c){ c.setAttribute("aria-pressed", c === chip ? "true" : "false"); });
+  tiers.forEach(function(t){
+    t.addEventListener("click", function(){
+      tiers.forEach(function(x){ x.setAttribute("aria-pressed", x === t ? "true" : "false"); });
+      selectedTier = t;
       custom.value = "";
-      currentAmount = parseFloat(chip.dataset.amt);
+      currentAmount = tierAmount(t);
       build();
     });
   });
 
   custom.addEventListener("input", function(){
-    var raw = custom.value.replace(/[^0-9.]/g, "");
-    var val = parseFloat(raw);
-    chips.forEach(function(c){ c.setAttribute("aria-pressed","false"); });
-    currentAmount = (!isNaN(val) && val > 0) ? Math.round(val * 100) / 100 : 0;
+    var v = parseFloat(custom.value.replace(/[^0-9.]/g, ""));
+    tiers.forEach(function(x){ x.setAttribute("aria-pressed", "false"); });
+    selectedTier = null;
+    currentAmount = (!isNaN(v) && v > 0) ? Math.round(v * 100) / 100 : 0;
     build();
   });
 
-  // Complete at rest: one-time $180 is active on load.
+  // Complete at rest: one-time entry partnership ($1,800) is active on load.
+  renderTierAmts();
   build();
 
   // Copy-to-clipboard helper for the Zelle address and the EIN
