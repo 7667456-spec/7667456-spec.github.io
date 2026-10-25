@@ -141,6 +141,22 @@
   .ein-copy{font-family:var(--body);font-size:12px;color:var(--gold);background:none;border:0;border-bottom:1px solid var(--gold);cursor:pointer;padding:0 0 1px;margin-left:8px}
   .ein-copy:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .df-badge{color:var(--muted);font-size:12px;margin-top:8px;text-align:center}
+  .zelle-report{margin-top:14px;width:100%;font-family:var(--body);font-size:14px;color:var(--ink);background:none;border:1px dashed var(--chip-line);border-radius:3px;padding:11px;cursor:pointer;transition:border-color .15s,background .15s}
+  .zelle-report:hover{border-color:var(--pine);background:var(--surface)}
+  .zelle-report:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .zelle-form{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+  .zinput{width:100%;font-family:var(--body);font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--chip-line);border-radius:3px;padding:12px}
+  .zinput::placeholder{color:var(--muted);opacity:.75}
+  .zinput:focus{outline:none;border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+  .zamt-wrap{position:relative;display:flex;align-items:center}
+  .zamt-wrap .cur2{position:absolute;left:12px;color:var(--muted)}
+  #zAmount{padding-left:28px;font-variant-numeric:tabular-nums}
+  .zsubmit{width:100%;font-family:var(--display);font-size:16px;color:var(--pine-ink);background:var(--pine);border:1px solid var(--pine);border-radius:3px;padding:13px;cursor:pointer;transition:background .15s}
+  .zsubmit:hover{background:var(--pine-deep)}
+  .zsubmit:disabled{opacity:.6;cursor:default}
+  .zerr{color:#C0503C;font-size:12.5px;margin:0;min-height:1px}
+  .zdone{color:var(--pine);font-size:13.5px;margin:12px 0 0;text-align:center;line-height:1.5}
+  @media (prefers-color-scheme:dark){.zdone{color:var(--gold-bright)} .zerr{color:#E39383}}
 
   /* Footer */
   footer{border-top:1px solid var(--line);padding-block:30px 40px;text-align:center}
@@ -231,6 +247,18 @@
               <span class="zelle-addr" id="zelleAddr">info@baisshalom.org</span>
               <button type="button" class="zelle-copy" id="zelleCopy">Copy</button>
             </div>
+
+            <button type="button" class="zelle-report" id="zelleReportBtn">I've sent my Zelle gift →</button>
+            <div class="zelle-form" id="zelleForm" hidden>
+              <input class="zinput" id="zName" type="text" autocomplete="name" placeholder="Your name">
+              <div class="zamt-wrap">
+                <span class="cur2">$</span>
+                <input class="zinput" id="zAmount" inputmode="decimal" autocomplete="off" placeholder="Amount you sent" aria-label="Amount sent in US dollars">
+              </div>
+              <p class="zerr" id="zErr" role="alert"></p>
+              <button type="button" class="zsubmit" id="zSubmit">Notify the kollel</button>
+            </div>
+            <p class="zdone" id="zelleDone" hidden>Thank you — the kollel has been notified of your gift.</p>
           </div>
         </div>
       </div>
@@ -336,6 +364,46 @@
   }
   wireCopy("zelleCopy", "zelleAddr");
   wireCopy("einCopy", "einVal");
+
+  // "I've sent my Zelle gift" — donor self-reports, which emails the kollel an alert
+  var zReportBtn = document.getElementById("zelleReportBtn");
+  var zForm = document.getElementById("zelleForm");
+  var zDone = document.getElementById("zelleDone");
+  var zSubmit = document.getElementById("zSubmit");
+  if (zReportBtn && zForm){
+    zReportBtn.addEventListener("click", function(){
+      zForm.hidden = false;
+      zReportBtn.hidden = true;
+      var n = document.getElementById("zName"); if (n) n.focus();
+    });
+  }
+  if (zSubmit){
+    zSubmit.addEventListener("click", function(){
+      var err = document.getElementById("zErr"); err.textContent = "";
+      var name = (document.getElementById("zName").value || "").trim();
+      var amt = parseFloat((document.getElementById("zAmount").value || "").replace(/[^0-9.]/g, ""));
+      if (!name){ err.textContent = "Please enter your name."; return; }
+      if (isNaN(amt) || amt <= 0){ err.textContent = "Please enter the amount you sent."; return; }
+      zSubmit.disabled = true; zSubmit.textContent = "Sending…";
+      function finish(){ zForm.hidden = true; if (zDone) zDone.hidden = false; }
+      var timer = setTimeout(finish, 3500);
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          access_key: "2ceb68f8-5896-42f0-be59-aa9f03325c8d",
+          subject: "🔵 Zelle donation reported — $" + amt,
+          from_name: "Aitz Chaim Donation Page",
+          method: "Zelle (self-reported by donor)",
+          donor_name: name,
+          amount_usd: amt,
+          reported_at: new Date().toLocaleString()
+        }),
+        keepalive: true
+      }).then(function(){ clearTimeout(timer); finish(); })
+        .catch(function(){ clearTimeout(timer); finish(); });
+    });
+  }
 </script>
 </body>
 </html>
