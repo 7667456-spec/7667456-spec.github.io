@@ -133,6 +133,14 @@
   .zelle-copy{flex:0 0 auto;font-family:var(--body);font-size:13px;color:var(--pine-ink);background:var(--pine);border:1px solid var(--pine);border-radius:3px;padding:0 16px;cursor:pointer;transition:background .15s}
   .zelle-copy:hover{background:var(--pine-deep)}
   .zelle-copy:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .df-details{margin-top:12px;border:1px solid var(--chip-line);border-radius:3px;padding:14px 16px;background:var(--chip)}
+  .df-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:3px 0;font-size:14px}
+  .df-line .k{color:var(--muted);flex:0 0 auto}
+  .df-line .v{text-align:right;min-width:0;overflow-x:auto;white-space:nowrap}
+  .df-line .ein{font-variant-numeric:tabular-nums}
+  .ein-copy{font-family:var(--body);font-size:12px;color:var(--gold);background:none;border:0;border-bottom:1px solid var(--gold);cursor:pointer;padding:0 0 1px;margin-left:8px}
+  .ein-copy:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .df-badge{color:var(--muted);font-size:12px;margin-top:8px;text-align:center}
 
   /* Footer */
   footer{border-top:1px solid var(--line);padding-block:30px 40px;text-align:center}
@@ -217,8 +225,14 @@
 
           <a class="alt-btn" href="https://www.thedonorsfund.org/" target="_blank" rel="noopener noreferrer">
             <span class="t">The Donors Fund</span>
-            <span class="s">Log in to your account and send a grant to the kollel</span>
+            <span class="s">Log in to your account and send a grant to the charity below</span>
           </a>
+
+          <div class="df-details">
+            <div class="df-line"><span class="k">Charity</span><span class="v">Congregation Bais Shalom</span></div>
+            <div class="df-line"><span class="k">Tax ID (EIN)</span><span class="v"><span class="ein" id="einVal">46-4301263</span><button type="button" class="ein-copy" id="einCopy">Copy</button></span></div>
+            <div class="df-badge">A registered 501(c)(3) organization</div>
+          </div>
 
           <div class="zelle">
             <div class="zelle-head">Zelle</div>
@@ -310,25 +324,28 @@
   // Complete at rest: one-time $180 is active on load.
   build();
 
-  // Zelle address copy button
-  var zCopy = document.getElementById("zelleCopy");
-  var zAddr = document.getElementById("zelleAddr");
-  if (zCopy && zAddr){
-    zCopy.addEventListener("click", function(){
-      var text = zAddr.textContent.trim();
-      function done(){ var old = zCopy.textContent; zCopy.textContent = "Copied"; setTimeout(function(){ zCopy.textContent = old; }, 1800); }
-      if (navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(text).then(done).catch(selectFallback);
-      } else { selectFallback(); }
+  // Copy-to-clipboard helper for the Zelle address and the EIN
+  function wireCopy(btnId, srcId){
+    var btn = document.getElementById(btnId);
+    var src = document.getElementById(srcId);
+    if (!btn || !src) return;
+    btn.addEventListener("click", function(){
+      var text = src.textContent.trim();
+      function done(){ var old = btn.textContent; btn.textContent = "Copied"; setTimeout(function(){ btn.textContent = old; }, 1800); }
       function selectFallback(){
         try {
-          var r = document.createRange(); r.selectNodeContents(zAddr);
+          var r = document.createRange(); r.selectNodeContents(src);
           var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
           done();
         } catch (e) {}
       }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(selectFallback);
+      } else { selectFallback(); }
     });
   }
+  wireCopy("zelleCopy", "zelleAddr");
+  wireCopy("einCopy", "einVal");
 </script>
 </body>
 </html>
