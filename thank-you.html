@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thank You — Aitz Chaim Kollel Network</title>
+<style>
+  :root{
+    --ink:#1C2B24;--bg:#ECE8DC;--surface:#FBF9F2;--pine:#1E4432;--pine-ink:#F3EFE2;
+    --gold:#A9833A;--gold-bright:#B89247;--muted:#6B6456;--line:rgba(28,43,36,.14);
+    --shadow:0 1px 2px rgba(22,43,34,.06),0 10px 30px rgba(22,43,34,.08);
+    --display:"Marcellus","Spectral",Georgia,serif;
+    --hebrew:"Frank Ruhl Libre","Spectral",Georgia,serif;
+    --body:"Spectral",Georgia,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --ink:#ECE7D7;--bg:#10140F;--surface:#1A201A;--pine:#234D38;--pine-ink:#F1ECDD;
+    --gold:#C7A24E;--gold-bright:#D4B15E;--muted:#9B9484;--line:rgba(236,231,215,.15);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.45);color-scheme:dark;
+  }}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;font-size:16px;min-height:100%;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+  .wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:48px max(20px,env(safe-area-inset-left,0px)) 48px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);max-width:460px;width:100%;text-align:center;padding:44px max(26px,7%) 40px}
+  .seal{width:66px;height:66px;margin:0 auto 22px;display:block}
+  .seal circle,.seal path,.seal line{stroke:var(--gold-bright)}
+  .check{width:58px;height:58px;margin:0 auto 20px;display:block}
+  .check circle{fill:none;stroke:var(--pine);stroke-width:2}
+  .check path{fill:none;stroke:var(--pine);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  @media (prefers-color-scheme:dark){.check circle,.check path{stroke:var(--gold-bright)}}
+  h1{font-family:var(--display);font-weight:400;font-size:30px;margin:0 0 10px;letter-spacing:.01em}
+  .hebrew{font-family:var(--hebrew);font-weight:500;font-size:20px;color:var(--gold-bright);margin:0 0 20px;direction:rtl}
+  p{margin:0 0 14px;color:var(--ink)}
+  .muted{color:var(--muted);font-size:14px}
+  .receipt{margin:24px auto 0;text-align:left;border-top:1px solid var(--line);padding-top:18px;max-width:300px}
+  .row{display:flex;justify-content:space-between;gap:16px;font-size:14.5px;padding:5px 0}
+  .row .k{color:var(--muted)}
+  .row .v{font-variant-numeric:tabular-nums;text-align:right}
+  .back{display:inline-block;margin-top:26px;font-family:var(--display);font-size:16px;color:var(--pine);text-decoration:none;border-bottom:1px solid var(--gold)}
+  @media (prefers-color-scheme:dark){.back{color:var(--gold-bright)}}
+  .back:hover{border-bottom-color:var(--pine)}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:wght@400;500&family=Frank+Ruhl+Libre:wght@500&display=swap">
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <svg class="check" viewBox="0 0 60 60" aria-hidden="true">
+      <circle cx="30" cy="30" r="27"/>
+      <path d="M19 31l7.5 7.5L42 22"/>
+    </svg>
+    <h1>Thank You</h1>
+    <p class="hebrew">תזכו למצוות</p>
+    <p id="lead">Your generous gift supports a day of Torah learning for our avreichim. May it be a source of blessing.</p>
+    <div class="receipt" id="receipt" hidden>
+      <div class="row"><span class="k">Amount</span><span class="v" id="rAmount">—</span></div>
+      <div class="row" id="rFreqRow" hidden><span class="k">Frequency</span><span class="v" id="rFreq">—</span></div>
+      <div class="row" id="rRefRow" hidden><span class="k">Reference</span><span class="v" id="rRef">—</span></div>
+    </div>
+    <p class="muted" style="margin-top:22px">A receipt has been emailed to you. For any question, reply to that email.</p>
+    <a class="back" id="backLink" href="#">Return to the kollel</a>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     TWO SETTINGS TO FILL IN:
+     1) Your free Web3Forms access key (alerts you on each gift).
+        Get one at https://web3forms.com with your own email.
+     2) The address of your donation page, for the "Return" link.
+     ============================================================ */
+  var WEB3FORMS_ACCESS_KEY = "2ceb68f8-5896-42f0-be59-aa9f03325c8d";
+  var DONATION_PAGE_URL   = "https://7667456-spec.github.io/";
+
+  document.getElementById("backLink").href = DONATION_PAGE_URL;
+
+  // Read whatever Cardknox appended to the return URL. Field names vary by
+  // account, so we check the common ones and fall back gracefully.
+  var q = new URLSearchParams(location.search);
+  function pick(){ for (var i=0;i<arguments.length;i++){ var v=q.get(arguments[i]); if(v) return v; } return ""; }
+
+  var result = pick("xResult","xStatus","result","status");
+  var amount = pick("xAmount","amount","xAuthAmount");
+  var name   = pick("xName","xBillFirstName","xBillName","name");
+  var lname  = pick("xBillLastName");
+  var email  = pick("xEmail","xBillEmail","email");
+  var ref    = pick("xRefNum","xRef","refnum");
+  var auth   = pick("xAuthCode","authcode");
+  var recur  = pick("xEnableRecurring","recurring");
+
+  var approved = !result || /^(a|approv|success|ok|1|true)/i.test(result); // treat unknown as success page
+  var fullName = (name + " " + lname).trim();
+
+  // Fill the on-screen receipt
+  if (amount){
+    document.getElementById("rAmount").textContent = "$" + Number(amount).toLocaleString("en-US");
+    document.getElementById("receipt").hidden = false;
+  }
+  if (recur && /^(1|true|yes|month)/i.test(recur)){
+    document.getElementById("rFreq").textContent = "Monthly";
+    document.getElementById("rFreqRow").hidden = false;
+  }
+  if (ref){
+    document.getElementById("rRef").textContent = ref;
+    document.getElementById("rRefRow").hidden = false;
+  }
+
+  // Alert the kollel — only for a completed (approved) gift.
+  var hasKey = WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY.indexOf("PASTE-") !== 0;
+  if (hasKey && approved && (amount || ref)){
+    var isMonthly = recur && /^(1|true|yes|month)/i.test(recur);
+    fetch("https://api.web3forms.com/submit", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Accept":"application/json" },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject: "✅ Donation received — $" + (amount||"?") + (isMonthly ? " / month" : ""),
+        from_name: "Aitz Chaim Donation Page",
+        donor_name: fullName || "(not provided)",
+        donor_email: email || "(not provided)",
+        amount_usd: amount || "(unknown)",
+        frequency: isMonthly ? "Monthly recurring" : "One-time",
+        reference: ref || "",
+        auth_code: auth || "",
+        received_at: new Date().toLocaleString()
+      }),
+      keepalive:true
+    }).catch(function(){});
+  }
+</script>
+</body>
+</html>
