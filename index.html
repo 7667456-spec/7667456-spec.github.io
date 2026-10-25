@@ -219,8 +219,8 @@
 
         <span class="field-label" id="freqLabel">Frequency</span>
         <div class="freq" role="group" aria-labelledby="freqLabel">
-          <button type="button" data-freq="once" aria-pressed="true">One-time</button>
-          <button type="button" data-freq="month" aria-pressed="false">Monthly</button>
+          <button type="button" data-freq="once" aria-pressed="false">One-time</button>
+          <button type="button" data-freq="month" aria-pressed="true">Monthly</button>
         </div>
 
         <span class="field-label" id="tierLabel">Choose your partnership</span>
@@ -337,7 +337,7 @@
   var btn = document.getElementById("donateBtn");
   var label = document.getElementById("donateLabel");
 
-  var currentFreq = "once";   // "once" or "month"
+  var currentFreq = "month";   // "once" or "month"
   var selectedTier = document.querySelector('.tier[aria-pressed="true"]');
 
   function fmt(n){ return "$" + Number(n).toLocaleString("en-US"); }
