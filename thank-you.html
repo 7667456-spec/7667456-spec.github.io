@@ -107,9 +107,15 @@
     document.getElementById("rRefRow").hidden = false;
   }
 
-  // Alert the kollel — only for a completed (approved) gift.
+  // Don't alert twice for the same gift if this page is reloaded or revisited.
+  var dedupeKey = "ac_notified_" + (ref || (amount + "_" + auth));
+  var alreadyNotified = false;
+  try { alreadyNotified = !!localStorage.getItem(dedupeKey); } catch (e) {}
+
+  // Alert the kollel — only for a completed (approved) gift, and only once.
   var hasKey = WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY.indexOf("PASTE-") !== 0;
-  if (hasKey && approved && (amount || ref)){
+  if (hasKey && approved && !alreadyNotified && (amount || ref)){
+    try { localStorage.setItem(dedupeKey, "1"); } catch (e) {}
     var isMonthly = recur && /^(1|true|yes|month)/i.test(recur);
     fetch("https://api.web3forms.com/submit", {
       method:"POST",
