@@ -253,8 +253,12 @@
             <a class="df-go" href="https://www.thedonorsfund.org/portal/sign-in" target="_blank" rel="noopener noreferrer">Go to The Donors Fund →</a>
           </div>
 
-          <div class="zelle">
-            <div class="zelle-head">Zelle</div>
+          <button type="button" class="alt-btn" style="margin-top:12px" id="zelleToggle" aria-expanded="false">
+            <span class="t">Zelle</span>
+            <span class="s">Send directly by Zelle transfer</span>
+          </button>
+
+          <div class="zelle" id="zelleReveal" hidden>
             <p class="zelle-note">Send your gift directly to this address:</p>
             <div class="zelle-row">
               <span class="zelle-addr" id="zelleAddr">info@baisshalom.org</span>
@@ -386,6 +390,16 @@
       var show = dfDetails.hidden;
       dfDetails.hidden = !show;
       dfBtn.setAttribute("aria-expanded", show ? "true" : "false");
+    });
+  }
+
+  var zToggle = document.getElementById("zelleToggle");
+  var zReveal = document.getElementById("zelleReveal");
+  if (zToggle && zReveal){
+    zToggle.addEventListener("click", function(){
+      var show = zReveal.hidden;
+      zReveal.hidden = !show;
+      zToggle.setAttribute("aria-expanded", show ? "true" : "false");
     });
   }
 
