@@ -119,7 +119,7 @@
   .more{margin-top:30px}
   .more-sep{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:600;margin-bottom:18px}
   .more-sep::before,.more-sep::after{content:"";flex:1;height:1px;background:var(--line)}
-  .alt-btn{display:block;width:100%;text-align:center;text-decoration:none;background:var(--chip);color:var(--ink);border:1px solid var(--pine);border-radius:3px;padding:14px 16px;transition:background .15s,color .15s}
+  .alt-btn{display:block;width:100%;text-align:center;text-decoration:none;background:var(--chip);color:var(--ink);border:1px solid var(--pine);border-radius:3px;padding:14px 16px;transition:background .15s,color .15s;font-family:var(--body);cursor:pointer}
   .alt-btn:hover{background:var(--pine);color:var(--pine-ink)}
   .alt-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .alt-btn .t{display:block;font-family:var(--display);font-size:18px;line-height:1.1}
@@ -142,6 +142,9 @@
   .ein-copy:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .df-badge{color:var(--muted);font-size:12px;margin-top:8px;text-align:center}
   .df-intro{color:var(--muted);font-size:12.5px;margin:0 0 10px;text-align:center}
+  .df-go{display:block;text-align:center;text-decoration:none;margin-top:14px;font-family:var(--display);font-size:16px;color:var(--pine-ink);background:var(--pine);border:1px solid var(--pine);border-radius:3px;padding:12px;transition:background .15s}
+  .df-go:hover{background:var(--pine-deep)}
+  .df-go:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .alt-note{color:var(--muted);font-size:11.5px;text-align:center;margin:7px 2px 0;line-height:1.5}
   .zelle-report{margin-top:14px;width:100%;font-family:var(--body);font-size:14px;color:var(--ink);background:none;border:1px dashed var(--chip-line);border-radius:3px;padding:11px;cursor:pointer;transition:border-color .15s,background .15s}
   .zelle-report:hover{border-color:var(--pine);background:var(--surface)}
@@ -237,16 +240,17 @@
           </a>
           <p class="alt-note">A little more goes to fees than paying by card above</p>
 
-          <a class="alt-btn" style="margin-top:12px" id="dfBtn" href="https://www.thedonorsfund.org/portal/sign-in" target="_blank" rel="noopener noreferrer">
+          <button type="button" class="alt-btn" style="margin-top:12px" id="dfBtn" aria-expanded="false">
             <span class="t">The Donors Fund</span>
-            <span class="s">Sign in to your account and send a grant to our charity</span>
-          </a>
+            <span class="s">Give from your Donors Fund account</span>
+          </button>
 
           <div class="df-details" id="dfDetails" hidden>
             <p class="df-intro">Search for this charity in your Donors Fund account:</p>
             <div class="df-line"><span class="k">Charity</span><span class="v">Congregation Bais Shalom</span></div>
             <div class="df-line"><span class="k">Tax ID (EIN)</span><span class="v"><span class="ein" id="einVal">46-4301263</span><button type="button" class="ein-copy" id="einCopy">Copy</button></span></div>
             <div class="df-badge">A registered 501(c)(3) organization</div>
+            <a class="df-go" href="https://www.thedonorsfund.org/portal/sign-in" target="_blank" rel="noopener noreferrer">Go to The Donors Fund →</a>
           </div>
 
           <div class="zelle">
@@ -378,7 +382,11 @@
   var dfBtn = document.getElementById("dfBtn");
   var dfDetails = document.getElementById("dfDetails");
   if (dfBtn && dfDetails){
-    dfBtn.addEventListener("click", function(){ dfDetails.hidden = false; });
+    dfBtn.addEventListener("click", function(){
+      var show = dfDetails.hidden;
+      dfDetails.hidden = !show;
+      dfBtn.setAttribute("aria-expanded", show ? "true" : "false");
+    });
   }
 
   // "I've sent my Zelle gift" — donor self-reports, which emails the kollel an alert
