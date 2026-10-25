@@ -196,17 +196,17 @@
     <section class="card">
       <div class="card-pad">
         <div class="card-head">
-          <h2>Make a Donation</h2>
-          <p>Choose an amount to support a day of learning</p>
+          <h2>Become a Partner in Torah</h2>
+          <p>Choose your share in a day of Torah learning</p>
         </div>
 
         <span class="field-label" id="freqLabel">Frequency</span>
         <div class="freq" role="group" aria-labelledby="freqLabel">
-          <button type="button" data-freq="once" aria-pressed="true">One-time gift</button>
+          <button type="button" data-freq="once" aria-pressed="true">One-time</button>
           <button type="button" data-freq="month" aria-pressed="false">Monthly</button>
         </div>
 
-        <span class="field-label" id="amtLabel">Gift amount (USD)</span>
+        <span class="field-label" id="amtLabel">Partnership amount (USD)</span>
         <div class="amounts" role="group" aria-labelledby="amtLabel">
           <button type="button" class="chip" data-amt="36">$36</button>
           <button type="button" class="chip" data-amt="54">$54</button>
@@ -223,7 +223,7 @@
 
         <a class="donate" id="donateBtn" href="https://secure.cardknox.com/baisshalom?xcustom04=Aitz%20Chaim%20Kollel%20Network" target="_blank" rel="noopener noreferrer">
           <svg class="lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <span id="donateLabel">Donate $180</span>
+          <span id="donateLabel">Partner · $180</span>
         </a>
 
         <p class="secure">
@@ -232,17 +232,17 @@
         </p>
 
         <div class="more">
-          <div class="more-sep">Other ways to give</div>
+          <div class="more-sep">Other ways to partner</div>
 
           <a class="alt-btn" href="https://secured.israelgives.org/en/give/Elulshutefus" target="_blank" rel="noopener noreferrer">
             <span class="t">Apple Pay</span>
-            <span class="s">Fastest on your phone — give in one tap</span>
+            <span class="s">Fastest on your phone — partner in one tap</span>
           </a>
           <p class="alt-note">A little more goes to fees than paying by card above</p>
 
           <button type="button" class="alt-btn" style="margin-top:12px" id="dfBtn" aria-expanded="false">
             <span class="t">The Donors Fund</span>
-            <span class="s">Give from your Donors Fund account</span>
+            <span class="s">Partner through your Donors Fund account</span>
           </button>
 
           <div class="df-details" id="dfDetails" hidden>
@@ -255,17 +255,17 @@
 
           <button type="button" class="alt-btn" style="margin-top:12px" id="zelleToggle" aria-expanded="false">
             <span class="t">Zelle</span>
-            <span class="s">Send directly by Zelle transfer</span>
+            <span class="s">Partner directly by Zelle transfer</span>
           </button>
 
           <div class="zelle" id="zelleReveal" hidden>
-            <p class="zelle-note">Send your gift directly to this address:</p>
+            <p class="zelle-note">Send your partnership directly to this address:</p>
             <div class="zelle-row">
               <span class="zelle-addr" id="zelleAddr">info@baisshalom.org</span>
               <button type="button" class="zelle-copy" id="zelleCopy">Copy</button>
             </div>
 
-            <button type="button" class="zelle-report" id="zelleReportBtn">I've sent my Zelle gift →</button>
+            <button type="button" class="zelle-report" id="zelleReportBtn">I've sent my Zelle partnership →</button>
             <div class="zelle-form" id="zelleForm" hidden>
               <input class="zinput" id="zName" type="text" autocomplete="name" placeholder="Your name">
               <div class="zamt-wrap">
@@ -275,13 +275,13 @@
               <p class="zerr" id="zErr" role="alert"></p>
               <button type="button" class="zsubmit" id="zSubmit">Notify the kollel</button>
             </div>
-            <p class="zdone" id="zelleDone" hidden>Thank you — the kollel has been notified of your gift.</p>
+            <p class="zdone" id="zelleDone" hidden>Thank you — the kollel has been notified of your partnership.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <p class="note">You'll be taken to our secure payment page to complete your gift. A receipt is emailed to you once your donation is processed.</p>
+    <p class="note">You'll be taken to our secure payment page to complete your partnership. A tax-deductible receipt is emailed to you once it's processed.</p>
   </div>
 </main>
 
@@ -325,9 +325,9 @@
     }
     btn.href = url;
     if (currentAmount > 0){
-      label.textContent = "Donate " + fmt(currentAmount) + (currentFreq === "month" ? " / month" : "");
+      label.textContent = "Partner · " + fmt(currentAmount) + (currentFreq === "month" ? " / month" : "");
     } else {
-      label.textContent = "Continue to Donate";
+      label.textContent = "Continue";
     }
   }
 
@@ -430,7 +430,7 @@
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify({
           access_key: "2ceb68f8-5896-42f0-be59-aa9f03325c8d",
-          subject: "🔵 Zelle donation reported — $" + amt,
+          subject: "🔵 Zelle partnership reported — $" + amt,
           from_name: "Aitz Chaim Donation Page",
           method: "Zelle (self-reported by donor)",
           donor_name: name,
