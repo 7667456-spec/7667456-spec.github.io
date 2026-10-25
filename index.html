@@ -141,6 +141,7 @@
   .ein-copy{font-family:var(--body);font-size:12px;color:var(--gold);background:none;border:0;border-bottom:1px solid var(--gold);cursor:pointer;padding:0 0 1px;margin-left:8px}
   .ein-copy:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .df-badge{color:var(--muted);font-size:12px;margin-top:8px;text-align:center}
+  .df-intro{color:var(--muted);font-size:12.5px;margin:0 0 10px;text-align:center}
   .alt-note{color:var(--muted);font-size:11.5px;text-align:center;margin:7px 2px 0;line-height:1.5}
   .zelle-report{margin-top:14px;width:100%;font-family:var(--body);font-size:14px;color:var(--ink);background:none;border:1px dashed var(--chip-line);border-radius:3px;padding:11px;cursor:pointer;transition:border-color .15s,background .15s}
   .zelle-report:hover{border-color:var(--pine);background:var(--surface)}
@@ -236,12 +237,13 @@
           </a>
           <p class="alt-note">A little more goes to fees than paying by card above</p>
 
-          <a class="alt-btn" style="margin-top:12px" href="https://www.thedonorsfund.org/portal/sign-in" target="_blank" rel="noopener noreferrer">
+          <a class="alt-btn" style="margin-top:12px" id="dfBtn" href="https://www.thedonorsfund.org/portal/sign-in" target="_blank" rel="noopener noreferrer">
             <span class="t">The Donors Fund</span>
-            <span class="s">Sign in to your account and send a grant to the charity below</span>
+            <span class="s">Sign in to your account and send a grant to our charity</span>
           </a>
 
-          <div class="df-details">
+          <div class="df-details" id="dfDetails" hidden>
+            <p class="df-intro">Search for this charity in your Donors Fund account:</p>
             <div class="df-line"><span class="k">Charity</span><span class="v">Congregation Bais Shalom</span></div>
             <div class="df-line"><span class="k">Tax ID (EIN)</span><span class="v"><span class="ein" id="einVal">46-4301263</span><button type="button" class="ein-copy" id="einCopy">Copy</button></span></div>
             <div class="df-badge">A registered 501(c)(3) organization</div>
@@ -371,6 +373,13 @@
   }
   wireCopy("zelleCopy", "zelleAddr");
   wireCopy("einCopy", "einVal");
+
+  // Reveal the charity details (name + EIN to copy) only when the donor opens The Donors Fund
+  var dfBtn = document.getElementById("dfBtn");
+  var dfDetails = document.getElementById("dfDetails");
+  if (dfBtn && dfDetails){
+    dfBtn.addEventListener("click", function(){ dfDetails.hidden = false; });
+  }
 
   // "I've sent my Zelle gift" — donor self-reports, which emails the kollel an alert
   var zReportBtn = document.getElementById("zelleReportBtn");
