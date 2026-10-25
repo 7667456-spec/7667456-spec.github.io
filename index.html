@@ -105,6 +105,10 @@
   .tier-amt small{font-size:11px;color:var(--muted);font-weight:normal}
   @media (prefers-color-scheme:dark){.tier-amt{color:var(--gold-bright)}}
   .any-note{color:var(--muted);font-size:12px;text-align:center;margin:10px 2px 0;line-height:1.5}
+  .inspire{font-family:var(--body);font-style:italic;font-size:15px;line-height:1.65;color:var(--pine);text-align:center;margin:0 auto 24px;max-width:42ch}
+  @media (prefers-color-scheme:dark){.inspire{color:var(--gold-bright)}}
+  .tier-rec{border-color:var(--gold)}
+  .tier-flag{display:inline-block;font-family:var(--body);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--gold);padding:2px 9px;border-radius:999px;margin-bottom:6px}
 
   .amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
   .chip{font-family:var(--display);font-size:20px;color:var(--ink);background:var(--chip);border:1px solid var(--chip-line);border-radius:3px;padding:16px 8px;cursor:pointer;transition:border-color .15s,background .15s,color .15s,box-shadow .15s;font-variant-numeric:tabular-nums;line-height:1}
@@ -225,6 +229,8 @@
           <p>Choose your share in a day of Torah learning</p>
         </div>
 
+        <p class="inspire">Every Jew longs for a Yissachar–Zevulun partnership with an avreich in Eretz Yisrael.</p>
+
         <span class="field-label" id="freqLabel">Frequency</span>
         <div class="freq" role="group" aria-labelledby="freqLabel">
           <button type="button" data-freq="once" aria-pressed="false">One-time</button>
@@ -233,7 +239,7 @@
 
         <span class="field-label" id="tierLabel">Choose your partnership</span>
         <div class="tiers" role="group" aria-labelledby="tierLabel">
-          <button type="button" class="tier" data-year="1800" data-month="150" aria-pressed="true">
+          <button type="button" class="tier" data-year="1800" data-month="150">
             <span class="tier-info"><span class="tier-title">An hour of daily learning</span><span class="tier-sub">of one avreich, for a year</span></span>
             <span class="tier-amt"></span>
           </button>
@@ -241,8 +247,8 @@
             <span class="tier-info"><span class="tier-title">A morning seder</span><span class="tier-sub">of one avreich, for a year</span></span>
             <span class="tier-amt"></span>
           </button>
-          <button type="button" class="tier" data-year="6000" data-month="500">
-            <span class="tier-info"><span class="tier-title">A full avreich</span><span class="tier-sub">a year of his Torah learning</span></span>
+          <button type="button" class="tier tier-rec" data-year="6000" data-month="500">
+            <span class="tier-info"><span class="tier-flag">Recommended</span><span class="tier-title">A full avreich</span><span class="tier-sub">a year of his Torah learning</span></span>
             <span class="tier-amt"></span>
           </button>
           <button type="button" class="tier" data-year="12000" data-month="1000">
@@ -370,7 +376,7 @@
     btn.href = url;
     label.textContent = currentAmount > 0
       ? ("Partner · " + fmt(currentAmount) + (currentFreq === "month" ? " / month" : ""))
-      : "Continue";
+      : "Choose your partnership";
   }
 
   freqBtns.forEach(function(b){
