@@ -148,6 +148,8 @@
   .zelle{margin-top:14px;border:1px solid var(--chip-line);border-radius:3px;padding:16px;background:var(--chip)}
   .zelle-head{font-family:var(--display);font-size:18px;margin-bottom:4px}
   .zelle-note{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+  .zelle-memo{font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.5}
+  .zelle-memo b{color:var(--ink);font-weight:600}
   .zelle-row{display:flex;gap:8px;align-items:stretch}
   .zelle-addr{flex:1;min-width:0;display:flex;align-items:center;font-family:var(--body);font-size:15px;background:var(--surface);border:1px solid var(--chip-line);border-radius:3px;padding:10px 12px;overflow-x:auto;white-space:nowrap}
   .zelle-copy{flex:0 0 auto;font-family:var(--body);font-size:13px;color:var(--pine-ink);background:var(--pine);border:1px solid var(--pine);border-radius:3px;padding:0 16px;cursor:pointer;transition:background .15s}
@@ -307,6 +309,7 @@
               <span class="zelle-addr" id="zelleAddr">info@baisshalom.org</span>
               <button type="button" class="zelle-copy" id="zelleCopy">Copy</button>
             </div>
+            <p class="zelle-memo">In the Zelle memo, please note it is for: <b>451 Aitz Chaim</b></p>
 
             <button type="button" class="zelle-report" id="zelleReportBtn">I've sent my Zelle partnership →</button>
             <div class="zelle-form" id="zelleForm" hidden>
