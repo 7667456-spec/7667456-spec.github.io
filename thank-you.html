@@ -94,7 +94,7 @@
   var email  = pick("xEmail","xBillEmail","email");
   var ref    = pick("xRefNum","xRef","refnum");
   var auth   = pick("xAuthCode","authcode");
-  var recur  = pick("xEnableRecurring","recurring");
+  var recur  = pick("mo","xEnableRecurring","recurring");
 
   var approved = !result || /^(a|approv|success|ok|1|true)/i.test(result); // treat unknown as success page
   var fullName = (name + " " + lname).trim();

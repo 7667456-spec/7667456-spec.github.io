@@ -374,7 +374,10 @@
       url += "&xEnableRecurring=1&xIntervalType=Month&xIntervalCount=1";
     }
     if (THANK_YOU_URL && THANK_YOU_URL.indexOf("example.com") === -1){
-      url += "&xRedirectURL=" + encodeURIComponent(THANK_YOU_URL);
+      // Mark monthly gifts in our OWN return URL — Cardknox does not echo the
+      // recurring flag back, so this is how the thank-you page & alert email know.
+      var redirect = THANK_YOU_URL + (currentFreq === "month" ? "?mo=1" : "");
+      url += "&xRedirectURL=" + encodeURIComponent(redirect);
     }
     btn.href = url;
     label.textContent = currentAmount > 0
