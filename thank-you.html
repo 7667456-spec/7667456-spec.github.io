@@ -63,6 +63,7 @@
       <div class="row" id="rNameRow" hidden><span class="k">Name</span><span class="v" id="rName">—</span></div>
       <div class="row"><span class="k">Amount</span><span class="v" id="rAmount">—</span></div>
       <div class="row" id="rFreqRow"><span class="k">Frequency</span><span class="v" id="rFreq">—</span></div>
+      <div class="row" id="rPayRow" hidden><span class="k">Payments</span><span class="v" id="rPay">—</span></div>
       <div class="row" id="rRefRow" hidden><span class="k">Reference</span><span class="v" id="rRef">—</span></div>
     </div>
     <p class="muted" style="margin-top:22px">A receipt is on its way to your email. For anything at all, just reply to it — it comes straight to me.</p>
@@ -113,6 +114,15 @@
   // echo the recurring flag). Also accept any schedule/recurring field if present.
   var recur  = pick("mo","xEnableRecurring","recurring");
   var schedule = pick("xScheduleID","xScheduleId","xSchedule");
+  var desc   = pick("xDescription","description");
+  // Dedicated count fields if Cardknox ever sends them; otherwise parse
+  // "Transaction: 1 of 2" from xDescription (seen on a real 2-payment schedule).
+  var totalPayments = pick("xTotalPayments","xPayments","xNumberOfPayments","xNumPayments","xInstallments");
+  if (!totalPayments && desc){
+    var m = desc.match(/Transaction:\s*\d+\s+of\s+(\d+)/i) || desc.match(/\bof\s+(\d+)\s+payments?\b/i);
+    if (m) totalPayments = m[1];
+  }
+  var paymentsCount = (totalPayments && /^\d+$/.test(String(totalPayments))) ? String(parseInt(totalPayments, 10)) : "";
 
   var approved = !result || /^(a|approv|success|ok|1|true)/i.test(result); // treat unknown as success page
   var fullName = (name + " " + lname).trim();
@@ -146,6 +156,10 @@
   }
   document.getElementById("rFreq").textContent = isMonthlyGift ? "Monthly" : "One-time";
   document.getElementById("rFreqRow").hidden = false;
+  if (isMonthlyGift){
+    document.getElementById("rPay").textContent = paymentsCount ? paymentsCount : "Unlimited (until cancelled)";
+    document.getElementById("rPayRow").hidden = false;
+  }
   if (ref){
     document.getElementById("rRef").textContent = ref;
     document.getElementById("rRefRow").hidden = false;
@@ -167,12 +181,17 @@
       headers:{ "Content-Type":"application/json", "Accept":"application/json" },
       body: JSON.stringify({
         access_key: WEB3FORMS_ACCESS_KEY,
-        subject: "✅ New partner — $" + (amount||"?") + (isMonthly ? " / month (חודשי)" : " (חד-פעמי)"),
+        subject: "✅ New partner — $" + (amount||"?") + (isMonthly
+          ? (paymentsCount
+              ? " / month × " + paymentsCount + " (חודשי, " + paymentsCount + " תשלומים)"
+              : " / month (חודשי, ללא הגבלה)")
+          : " (חד-פעמי)"),
         from_name: "Aitz Chaim Donation Page",
         donor_name: fullName || "(not provided)",
         donor_email: email || "(not provided)",
         amount_usd: amount || "(unknown)",
         frequency: isMonthly ? "Monthly recurring" : "One-time",
+        number_of_payments: isMonthly ? (paymentsCount || "Unlimited (until cancelled)") : "",
         reference: ref || "",
         auth_code: auth || "",
         received_at: new Date().toLocaleString()
