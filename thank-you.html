@@ -40,6 +40,9 @@
   .back{display:inline-block;margin-top:26px;font-family:var(--display);font-size:16px;color:var(--pine);text-decoration:none;border-bottom:1px solid var(--gold)}
   @media (prefers-color-scheme:dark){.back{color:var(--gold-bright)}}
   .back:hover{border-bottom-color:var(--pine)}
+  .bracha{font-style:italic;color:var(--pine);font-size:15px;line-height:1.65;margin:24px auto 0;max-width:36ch}
+  @media (prefers-color-scheme:dark){.bracha{color:var(--gold-bright)}}
+  .signature{font-family:var(--display);font-size:14px;color:var(--muted);margin:16px 0 0;line-height:1.4}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:wght@400;500&family=Frank+Ruhl+Libre:wght@500&display=swap">
@@ -51,15 +54,18 @@
       <circle cx="30" cy="30" r="27"/>
       <path d="M19 31l7.5 7.5L42 22"/>
     </svg>
-    <h1>Thank You</h1>
+    <h1 id="title">Thank You</h1>
     <p class="hebrew">תזכו למצוות</p>
-    <p id="lead">You are now a partner in the Torah learning of our avreichim. May you share in its merit and blessing.</p>
+    <p id="lead">You are now a partner in the Torah of our avreichim. Every hour they sit and learn, you are learning along with them — and the zechus is yours.</p>
+    <p id="monthlyLine" class="muted" hidden>Your monthly partnership keeps their learning going, all year round.</p>
     <div class="receipt" id="receipt" hidden>
       <div class="row"><span class="k">Amount</span><span class="v" id="rAmount">—</span></div>
       <div class="row" id="rFreqRow" hidden><span class="k">Frequency</span><span class="v" id="rFreq">—</span></div>
       <div class="row" id="rRefRow" hidden><span class="k">Reference</span><span class="v" id="rRef">—</span></div>
     </div>
-    <p class="muted" style="margin-top:22px">A receipt has been emailed to you. For any question, reply to that email.</p>
+    <p class="muted" style="margin-top:22px">A receipt is on its way to your email. For anything at all, just reply to it — it comes straight to me.</p>
+    <p class="bracha">May the Torah you now have a share in be a zechus for you and your family — for gezunt, for nachas, and for hatzlacha in everything you need.</p>
+    <p class="signature">Rabbi Yisroel Meir Jaeger · Rosh Kollel</p>
     <a class="back" id="backLink" href="#">Return to the kollel</a>
   </div>
 </div>
@@ -93,12 +99,25 @@
   var approved = !result || /^(a|approv|success|ok|1|true)/i.test(result); // treat unknown as success page
   var fullName = (name + " " + lname).trim();
 
+  var isMonthlyGift = recur && /^(1|true|yes|month)/i.test(recur);
+
+  // Greet the partner by first name when Cardknox passes it through.
+  var firstName = fullName.split(/\s+/)[0];
+  if (firstName){
+    document.getElementById("title").textContent = "Thank you, " + firstName;
+  }
+
+  // A warm line for those who joined as a monthly partner.
+  if (isMonthlyGift){
+    document.getElementById("monthlyLine").hidden = false;
+  }
+
   // Fill the on-screen receipt
   if (amount){
     document.getElementById("rAmount").textContent = "$" + Number(amount).toLocaleString("en-US");
     document.getElementById("receipt").hidden = false;
   }
-  if (recur && /^(1|true|yes|month)/i.test(recur)){
+  if (isMonthlyGift){
     document.getElementById("rFreq").textContent = "Monthly";
     document.getElementById("rFreqRow").hidden = false;
   }
