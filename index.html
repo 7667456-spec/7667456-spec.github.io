@@ -3,7 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Aitz Chaim Kollel</title>
+<title>Partner with Aitz Chaim Kollel Network</title>
+<meta name="description" content="Partner in the Torah of over fifty avreichim in Beitar Illit and Beit Shemesh. One-time or monthly gifts. US tax-deductible 501(c)(3).">
+<link rel="canonical" href="https://aitzchaimkollel.org/">
+<meta name="theme-color" content="#1F3061">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aitz Chaim Kollel Network">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://aitzchaimkollel.org/">
+<meta property="og:title" content="Partner with Aitz Chaim Kollel Network">
+<meta property="og:description" content="Partner in the Torah of over fifty avreichim in Beitar Illit and Beit Shemesh. One-time or monthly gifts. US tax-deductible 501(c)(3).">
+<meta property="og:image" content="https://aitzchaimkollel.org/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Partner with Aitz Chaim Kollel Network">
+<meta name="twitter:description" content="Partner in the Torah of over fifty avreichim in Beitar Illit and Beit Shemesh. One-time or monthly gifts. US tax-deductible 501(c)(3).">
+<meta name="twitter:image" content="https://aitzchaimkollel.org/og.jpg">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
 <style>
@@ -18,6 +38,7 @@
     --pine-ink:#F3EFE2;
     --gold:#A9833A;
     --gold-bright:#B89247;
+    --gold-ink:#7A5C1E;
     --muted:#64636B;
     --line:rgba(28,30,50,.14);
     --chip:#FFFFFF;
@@ -36,6 +57,7 @@
     --pine-ink:#EEF0F8;
     --gold:#C7A24E;
     --gold-bright:#D4B15E;
+    --gold-ink:#C7A24E;
     --muted:#9598A8;
     --line:rgba(232,233,242,.15);
     --chip:#1F2434;
@@ -52,6 +74,7 @@
     --pine-ink:#EEF0F8;
     --gold:#C7A24E;
     --gold-bright:#D4B15E;
+    --gold-ink:#C7A24E;
     --muted:#9598A8;
     --line:rgba(232,233,242,.15);
     --chip:#1F2434;
@@ -160,7 +183,7 @@
   .df-line .k{color:var(--muted);flex:0 0 auto}
   .df-line .v{text-align:right;min-width:0;overflow-x:auto;white-space:nowrap}
   .df-line .ein{font-variant-numeric:tabular-nums}
-  .ein-copy{font-family:var(--body);font-size:12px;color:var(--gold);background:none;border:0;border-bottom:1px solid var(--gold);cursor:pointer;padding:0 0 1px;margin-left:8px}
+  .ein-copy{font-family:var(--body);font-size:12px;color:var(--gold-ink);background:none;border:0;border-bottom:1px solid var(--gold-ink);cursor:pointer;padding:0 0 1px;margin-left:8px}
   .ein-copy:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .df-badge{color:var(--muted);font-size:12px;margin-top:8px;text-align:center}
   .df-intro{color:var(--muted);font-size:12.5px;margin:0 0 10px;text-align:center}
@@ -188,11 +211,14 @@
   /* Beis medrash photo */
   .photo-band{line-height:0;background:var(--pine)}
   .photo-band img{display:block;width:100%;height:clamp(190px,42vw,300px);object-fit:cover;object-position:center 42%}
+  @media (max-width:374px){
+    .photo-band img{object-position:center 62%;height:clamp(210px,66vw,240px)}
+  }
 
   /* Footer */
   footer{border-top:1px solid var(--line);padding-block:30px 40px;text-align:center}
   footer .name{font-family:var(--display);font-size:17px;color:var(--ink);margin:0 0 4px}
-  footer .name-he{font-family:var(--hebrew);font-size:17px;color:var(--gold);margin:0 0 16px;direction:rtl}
+  footer .name-he{font-family:var(--hebrew);font-size:17px;color:var(--gold-ink);margin:0 0 16px;direction:rtl}
   .locs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 28px;color:var(--muted);font-size:13.5px}
   .loc b{color:var(--ink);font-weight:600;font-family:var(--display);font-size:14px;display:block;margin-bottom:2px}
   .loc span{direction:rtl;display:inline-block}
@@ -290,7 +316,10 @@
 <div class="band">
   <div class="inner masthead">
     <div class="logo-mark">
-      <img src="logo-light.png" alt="רשת הכוללים עץ חיים — Aitz Chaim Kollel Network" width="1000" height="707">
+      <picture>
+        <source type="image/webp" srcset="logo-light-360.webp 360w, logo-light-720.webp 720w" sizes="(min-width: 400px) 360px, calc(100vw - 40px)">
+        <img src="logo-light.png" alt="רשת הכוללים עץ חיים — Aitz Chaim Kollel Network" width="1000" height="707">
+      </picture>
     </div>
     <p class="kicker">A Network of Torah</p>
     <h1>Aitz Chaim Kollel Network</h1>
@@ -300,7 +329,10 @@
 </div>
 
 <div class="photo-band">
-  <img src="beis-medrash.jpg" alt="Avreichim learning in our beis medrash in Beitar Illit" width="1400" height="933">
+  <picture>
+    <source type="image/webp" srcset="beis-medrash-800.webp 800w, beis-medrash-1400.webp 1400w" sizes="100vw">
+    <img src="beis-medrash.jpg" alt="Avreichim learning in our beis medrash in Beitar Illit" width="1400" height="933">
+  </picture>
 </div>
 
 <main>
