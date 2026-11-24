@@ -204,35 +204,76 @@
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-  /* Test-only: in-page Cardknox PaymentSITE panel (not on the live homepage). */
-  .pay-panel{margin-top:22px;width:100%;max-width:100%;border:1px solid var(--line);border-radius:12px;background:var(--chip);overflow:hidden}
-  .pay-panel[hidden]{display:none !important}
-  .pay-panel-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface)}
-  .pay-panel-bar span{font-size:14px;color:var(--muted)}
-  .pay-panel-close{appearance:none;border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;padding:6px 8px;text-decoration:underline}
-  #payFrame{display:block;width:100%;max-width:100%;height:900px;border:0;background:#fff;box-sizing:border-box}
-  /* On small phones, nested .inner (20px) + .card-pad (22px) paddings shrink the
-     iframe to ~287px at 375 and ~232px at 320 — narrower than Cardknox's hCaptcha
-     (302px) and some form rows. That overflow pans the page on iOS Safari and
-     clips the left-side labels. Full-bleed the panel and lengthen the iframe. */
-  @media (max-width:430px){
-    .card:has(#payPanel:not([hidden])){overflow:visible}
-    .pay-panel{
-      width:100vw;
-      max-width:100vw;
-      margin-left:calc(50% - 50vw);
-      border-radius:0;
-      border-left:0;
-      border-right:0;
+  /* Test-only: Cardknox PaymentSITE opens in a site-styled sheet (not on the live homepage). */
+  body.pay-open{overflow:hidden;position:fixed;width:100%;left:0;right:0}
+  .pay-sheet[hidden]{display:none !important}
+  .pay-sheet{position:fixed;inset:0;z-index:80;display:flex;align-items:stretch;justify-content:center;max-width:100%}
+  .pay-sheet-backdrop{position:absolute;inset:0;background:rgba(21,33,74,.55);border:0;padding:0;margin:0;cursor:pointer}
+  .pay-sheet-dialog{
+    position:relative;z-index:1;display:flex;flex-direction:column;
+    width:100%;height:100%;height:100dvh;max-height:100dvh;max-width:100%;
+    background:var(--surface);color:var(--ink);overflow:hidden;
+    box-shadow:var(--shadow);
+    transform:translateY(100%);
+    animation:paySheetIn .34s ease-out forwards;
+  }
+  @keyframes paySheetIn{to{transform:translateY(0)}}
+  @keyframes payModalIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes paySpin{to{transform:rotate(360deg)}}
+  .pay-sheet-head{
+    flex:0 0 auto;position:sticky;top:0;z-index:2;
+    display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:2px 12px;align-items:center;
+    background:var(--pine);color:var(--pine-ink);
+    padding:max(10px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));
+    border-bottom:1px solid rgba(169,131,58,.35);
+  }
+  .pay-sheet-brand{min-width:0}
+  .pay-sheet-org{font-family:var(--display);font-size:13px;letter-spacing:.03em;margin:0;color:var(--gold-bright);line-height:1.3}
+  .pay-sheet-amt{font-family:var(--display);font-size:clamp(20px,5.4vw,26px);margin:2px 0 0;color:var(--pine-ink);line-height:1.15;font-variant-numeric:tabular-nums}
+  .pay-sheet-secure{grid-column:1;display:flex;align-items:center;gap:6px;margin:6px 0 0;font-size:12px;color:rgba(243,239,226,.82);line-height:1}
+  .pay-sheet-secure svg{width:13px;height:13px;flex:0 0 auto}
+  .pay-sheet-secure svg path,.pay-sheet-secure svg rect{stroke:rgba(243,239,226,.82)}
+  .pay-sheet-close{
+    appearance:none;grid-column:2;grid-row:1 / span 3;align-self:center;justify-self:end;
+    box-sizing:border-box;width:44px;height:44px;margin:0;padding:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:0;border-radius:4px;background:transparent;color:var(--pine-ink);
+    cursor:pointer;line-height:1;
+  }
+  .pay-sheet-close:hover{background:rgba(243,239,226,.1)}
+  .pay-sheet-close:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+  .pay-sheet-close svg{width:18px;height:18px;display:block}
+  .pay-sheet-body{
+    flex:1 1 auto;min-height:0;min-width:0;position:relative;
+    overflow:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+    background:var(--surface);overscroll-behavior:contain;
+  }
+  .pay-sheet-loader{
+    position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+    background:var(--surface);
+  }
+  .pay-sheet-loader[hidden]{display:none !important}
+  .pay-sheet-spinner{
+    width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--gold);
+    border-radius:50%;animation:paySpin .7s linear infinite;
+  }
+  #payFrame{
+    display:block;width:1px;min-width:100%;max-width:100%;height:100%;min-height:100%;
+    border:0;background:var(--surface);box-sizing:border-box;
+  }
+  @media (min-width:700px){
+    .pay-sheet{align-items:center;padding:24px}
+    .pay-sheet-dialog{
+      width:min(620px,100%);max-width:620px;
+      height:min(900px, calc(100dvh - 48px));max-height:min(900px, calc(100dvh - 48px));
+      border-radius:8px;
+      transform:none;
+      animation:payModalIn .28s ease-out forwards;
     }
-    #payFrame{
-      /* iOS: width:1px + min-width:100% stops Safari expanding the iframe to the
-         Cardknox document's scrollWidth (hidden CVV tooltips sit a bit wide). */
-      width:1px;
-      min-width:100%;
-      max-width:100%;
-      height:2200px;
-    }
+    .pay-sheet-head{padding-top:14px;border-radius:8px 8px 0 0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .pay-sheet-dialog,.pay-sheet-spinner{animation:none !important;transform:none}
   }
 </style>
 </head>
@@ -302,14 +343,6 @@
           <svg class="lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke-width="1.6" stroke-linecap="round"/></svg>
           <span id="donateLabel">Partner · $500 / month</span>
         </a>
-
-        <div class="pay-panel" id="payPanel" hidden>
-          <div class="pay-panel-bar">
-            <span>Secure payment — you stay on this page</span>
-            <button type="button" class="pay-panel-close" id="payClose">Close</button>
-          </div>
-          <iframe id="payFrame" title="Cardknox payment form" allow="payment" src="about:blank"></iframe>
-        </div>
 
         <p class="secure">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -383,6 +416,31 @@
   </div>
 </footer>
 
+
+<div class="pay-sheet" id="payPanel" hidden>
+  <button type="button" class="pay-sheet-backdrop" id="payBackdrop" tabindex="-1" aria-label="Close payment"></button>
+  <div class="pay-sheet-dialog" role="dialog" aria-modal="true" aria-labelledby="paySheetTitle">
+    <header class="pay-sheet-head">
+      <div class="pay-sheet-brand">
+        <p class="pay-sheet-org" id="paySheetTitle">Aitz Chaim Kollel Network</p>
+        <p class="pay-sheet-amt" id="paySheetAmount">$500 / month</p>
+      </div>
+      <p class="pay-sheet-secure">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Secure payment
+      </p>
+      <button type="button" class="pay-sheet-close" id="payClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="pay-sheet-body">
+      <div class="pay-sheet-loader" id="payLoader">
+        <div class="pay-sheet-spinner" role="status" aria-label="Loading payment form"></div>
+      </div>
+      <iframe id="payFrame" title="Cardknox payment form" allow="payment" src="about:blank"></iframe>
+    </div>
+  </div>
+</div>
 <script>
   var BASE = "https://secure.cardknox.com/baisshalom";
   var CAMPAIGN = "Aitz Chaim Kollel Network";
@@ -426,25 +484,81 @@
   }
 
 
+  var payStatePushed = false;
+  var payScrollY = 0;
+  var payLastFocus = null;
+
+  function payAmountLabel(){
+    return fmt(currentAmount) + (currentFreq === "month" ? " / month" : " one-time");
+  }
   function openPayPanel(){
     if (currentAmount <= 0) return;
     var panel = document.getElementById("payPanel");
     var frame = document.getElementById("payFrame");
+    var loader = document.getElementById("payLoader");
+    var amtEl = document.getElementById("paySheetAmount");
+    if (amtEl) amtEl.textContent = payAmountLabel();
+    if (loader) loader.hidden = false;
     frame.src = btn.href;
     panel.hidden = false;
-    panel.scrollIntoView({behavior:"smooth", block:"start"});
+    payLastFocus = document.activeElement;
+    payScrollY = window.scrollY || 0;
+    document.body.classList.add("pay-open");
+    document.body.style.top = "-" + payScrollY + "px";
+    if (!payStatePushed){
+      try{ history.pushState({ paySheet: 1 }, "", "#pay"); }catch(e){}
+      payStatePushed = true;
+    }
+    var closeBtn = document.getElementById("payClose");
+    if (closeBtn) closeBtn.focus();
   }
   function closePayPanel(){
     var panel = document.getElementById("payPanel");
+    if (!panel || panel.hidden){
+      payStatePushed = false;
+      return;
+    }
     var frame = document.getElementById("payFrame");
+    var loader = document.getElementById("payLoader");
     frame.src = "about:blank";
+    if (loader) loader.hidden = false;
     panel.hidden = true;
+    document.body.classList.remove("pay-open");
+    document.body.style.top = "";
+    window.scrollTo(0, payScrollY);
+    var shouldBack = payStatePushed && history.state && history.state.paySheet;
+    payStatePushed = false;
+    if (shouldBack){
+      try{ history.back(); }catch(e){}
+    }
+    if (payLastFocus && typeof payLastFocus.focus === "function"){
+      try{ payLastFocus.focus(); }catch(e){}
+    }
   }
   btn.addEventListener("click", function(e){
     e.preventDefault();
     openPayPanel();
   });
   document.getElementById("payClose").addEventListener("click", closePayPanel);
+  var payBackdrop = document.getElementById("payBackdrop");
+  if (payBackdrop) payBackdrop.addEventListener("click", closePayPanel);
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") closePayPanel();
+  });
+  window.addEventListener("popstate", function(){
+    var panel = document.getElementById("payPanel");
+    if (panel && !panel.hidden){
+      payStatePushed = false;
+      closePayPanel();
+    }
+  });
+  document.getElementById("payFrame").addEventListener("load", function(){
+    var frame = document.getElementById("payFrame");
+    var src = frame && (frame.getAttribute("src") || frame.src || "");
+    if (!src || src === "about:blank" || /about:blank/.test(src)) return;
+    var loader = document.getElementById("payLoader");
+    if (loader) loader.hidden = true;
+  });
 
   freqBtns.forEach(function(b){
     b.addEventListener("click", function(){
