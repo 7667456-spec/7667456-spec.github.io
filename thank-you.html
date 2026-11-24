@@ -19,7 +19,8 @@
     --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.45);color-scheme:dark;
   }}
   *{box-sizing:border-box}
-  html,body{margin:0}
+  html,body{margin:0;overflow-x:hidden;max-width:100%}
+  .row .v{overflow-wrap:anywhere;word-break:break-word}
   body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;font-size:16px;min-height:100%;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
   .wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:48px max(20px,env(safe-area-inset-left,0px)) 48px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);max-width:460px;width:100%;text-align:center;padding:44px max(26px,7%) 40px}
@@ -59,8 +60,9 @@
     <p id="lead">You are now a partner in the Torah of our avreichim. Every hour they sit and learn, you are learning along with them — and the zechus is yours.</p>
     <p id="monthlyLine" class="muted" hidden>Your monthly partnership keeps their learning going, all year round.</p>
     <div class="receipt" id="receipt" hidden>
+      <div class="row" id="rNameRow" hidden><span class="k">Name</span><span class="v" id="rName">—</span></div>
       <div class="row"><span class="k">Amount</span><span class="v" id="rAmount">—</span></div>
-      <div class="row" id="rFreqRow" hidden><span class="k">Frequency</span><span class="v" id="rFreq">—</span></div>
+      <div class="row" id="rFreqRow"><span class="k">Frequency</span><span class="v" id="rFreq">—</span></div>
       <div class="row" id="rRefRow" hidden><span class="k">Reference</span><span class="v" id="rRef">—</span></div>
     </div>
     <p class="muted" style="margin-top:22px">A receipt is on its way to your email. For anything at all, just reply to it — it comes straight to me.</p>
@@ -82,6 +84,19 @@
 
   document.getElementById("backLink").href = DONATION_PAGE_URL;
 
+  // If Cardknox redirected inside our payment iframe, break out to the top
+  // window so the donor sees a full thank-you page (not a scrolled beige sheet).
+  // Do not send the alert or write localStorage here — the top-level load will.
+  if (window.top && window.top !== window.self){
+    try {
+      window.top.location.href = location.href;
+    } catch (err){
+      try {
+        window.parent.postMessage({ type: "aitz-chaim-thankyou", href: location.href }, location.origin);
+      } catch (err2){}
+    }
+  } else {
+
   // Read whatever Cardknox appended to the return URL. Field names vary by
   // account, so we check the common ones and fall back gracefully.
   var q = new URLSearchParams(location.search);
@@ -94,12 +109,18 @@
   var email  = pick("xEmail","xBillEmail","email");
   var ref    = pick("xRefNum","xRef","refnum");
   var auth   = pick("xAuthCode","authcode");
+  // Our own redirect adds ?mo=1 for monthly gifts (Cardknox does not reliably
+  // echo the recurring flag). Also accept any schedule/recurring field if present.
   var recur  = pick("mo","xEnableRecurring","recurring");
+  var schedule = pick("xScheduleID","xScheduleId","xSchedule");
 
   var approved = !result || /^(a|approv|success|ok|1|true)/i.test(result); // treat unknown as success page
   var fullName = (name + " " + lname).trim();
+  // If Cardknox put the full name only in xBillLastName (the "Bill Name" field),
+  // pick() already got a first-name-like value in `name`; avoid doubling it.
+  if (name && lname && lname.toLowerCase() === name.toLowerCase()) fullName = name;
 
-  var isMonthlyGift = recur && /^(1|true|yes|month)/i.test(recur);
+  var isMonthlyGift = !!(recur && /^(1|true|yes|month)/i.test(String(recur))) || !!schedule;
 
   // Greet the partner by first name when Cardknox passes it through.
   var firstName = fullName.split(/\s+/)[0];
@@ -112,21 +133,26 @@
     document.getElementById("monthlyLine").hidden = false;
   }
 
-  // Fill the on-screen receipt
-  if (amount){
-    document.getElementById("rAmount").textContent = "$" + Number(amount).toLocaleString("en-US");
+  // Fill the on-screen receipt — always show One-time or Monthly clearly.
+  if (amount || ref || fullName){
     document.getElementById("receipt").hidden = false;
   }
-  if (isMonthlyGift){
-    document.getElementById("rFreq").textContent = "Monthly";
-    document.getElementById("rFreqRow").hidden = false;
+  if (fullName){
+    document.getElementById("rName").textContent = fullName;
+    document.getElementById("rNameRow").hidden = false;
   }
+  if (amount){
+    document.getElementById("rAmount").textContent = "$" + Number(amount).toLocaleString("en-US");
+  }
+  document.getElementById("rFreq").textContent = isMonthlyGift ? "Monthly" : "One-time";
+  document.getElementById("rFreqRow").hidden = false;
   if (ref){
     document.getElementById("rRef").textContent = ref;
     document.getElementById("rRefRow").hidden = false;
   }
 
   // Don't alert twice for the same gift if this page is reloaded or revisited.
+  // Only the top-level page sends (iframe breakout returns early above).
   var dedupeKey = "ac_notified_" + (ref || (amount + "_" + auth));
   var alreadyNotified = false;
   try { alreadyNotified = !!localStorage.getItem(dedupeKey); } catch (e) {}
@@ -135,13 +161,13 @@
   var hasKey = WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY.indexOf("PASTE-") !== 0;
   if (hasKey && approved && !alreadyNotified && (amount || ref)){
     try { localStorage.setItem(dedupeKey, "1"); } catch (e) {}
-    var isMonthly = recur && /^(1|true|yes|month)/i.test(recur);
+    var isMonthly = isMonthlyGift;
     fetch("https://api.web3forms.com/submit", {
       method:"POST",
       headers:{ "Content-Type":"application/json", "Accept":"application/json" },
       body: JSON.stringify({
         access_key: WEB3FORMS_ACCESS_KEY,
-        subject: "✅ New partner — $" + (amount||"?") + (isMonthly ? " / month" : ""),
+        subject: "✅ New partner — $" + (amount||"?") + (isMonthly ? " / month (חודשי)" : " (חד-פעמי)"),
         from_name: "Aitz Chaim Donation Page",
         donor_name: fullName || "(not provided)",
         donor_email: email || "(not provided)",
@@ -154,6 +180,8 @@
       keepalive:true
     }).catch(function(){});
   }
+
+  } // end top-level (not in iframe)
 </script>
 </body>
 </html>

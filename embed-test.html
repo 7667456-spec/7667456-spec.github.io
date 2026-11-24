@@ -565,11 +565,25 @@
     }
   });
   document.getElementById("payFrame").addEventListener("load", function(){
+    var bodyEl = document.querySelector(".pay-sheet-body");
+    if (bodyEl) bodyEl.scrollTop = 0;
     var frame = document.getElementById("payFrame");
     var src = frame && (frame.getAttribute("src") || frame.src || "");
     if (!src || src === "about:blank" || /about:blank/.test(src)) return;
     var loader = document.getElementById("payLoader");
     if (loader) loader.hidden = true;
+  });
+  window.addEventListener("message", function(e){
+    if (e.origin !== location.origin) return;
+    if (!e.data || e.data.type !== "aitz-chaim-thankyou") return;
+    var href = e.data.href;
+    try {
+      var u = new URL(href, location.href);
+      if (u.origin !== location.origin) return;
+      if (!/thank-you\.html$/i.test(u.pathname)) return;
+    } catch (err){ return; }
+    if (typeof closePayPanel === "function") closePayPanel();
+    location.href = href;
   });
 
   freqBtns.forEach(function(b){

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
 <style>
-  html,body{margin:0}
+  html,body{margin:0;overflow-x:hidden;max-width:100%}
   /* Layout: full-width pine masthead, a single centered giving card on ivory, quiet footer. */
   :root{
     --ink:#1E2742;
@@ -202,6 +202,87 @@
     .masthead{padding-block:38px 36px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  /* Cardknox PaymentSITE opens in a site-styled sheet so the donor stays on this page. */
+  body.pay-open{overflow:hidden;position:fixed;width:100%;left:0;right:0}
+  .pay-sheet[hidden]{display:none !important}
+  .pay-sheet{position:fixed;inset:0;z-index:80;display:flex;align-items:stretch;justify-content:center;max-width:100%}
+  .pay-sheet-backdrop{position:absolute;inset:0;background:rgba(21,33,74,.55);border:0;padding:0;margin:0;cursor:pointer}
+  .pay-sheet-dialog{
+    position:relative;z-index:1;display:flex;flex-direction:column;
+    width:100%;height:100%;height:100dvh;max-height:100dvh;max-width:100%;
+    background:var(--surface);color:var(--ink);overflow:hidden;
+    box-shadow:var(--shadow);
+    transform:translateY(100%);
+    animation:paySheetIn .34s ease-out forwards;
+  }
+  @keyframes paySheetIn{to{transform:translateY(0)}}
+  @keyframes payModalIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes paySpin{to{transform:rotate(360deg)}}
+  .pay-sheet-head{
+    flex:0 0 auto;position:sticky;top:0;z-index:2;
+    display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:2px 12px;align-items:center;
+    background:var(--pine);color:var(--pine-ink);
+    padding:max(10px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));
+    border-bottom:1px solid rgba(169,131,58,.35);
+  }
+  .pay-sheet-brand{min-width:0}
+  .pay-sheet-org{font-family:var(--display);font-size:13px;letter-spacing:.03em;margin:0;color:var(--gold-bright);line-height:1.3}
+  .pay-sheet-amt{font-family:var(--display);font-size:clamp(20px,5.4vw,26px);margin:2px 0 0;color:var(--pine-ink);line-height:1.15;font-variant-numeric:tabular-nums}
+  .pay-sheet-secure{grid-column:1;display:flex;align-items:center;gap:6px;margin:6px 0 0;font-size:12px;color:rgba(243,239,226,.82);line-height:1}
+  .pay-sheet-secure svg{width:13px;height:13px;flex:0 0 auto}
+  .pay-sheet-secure svg path,.pay-sheet-secure svg rect{stroke:rgba(243,239,226,.82)}
+  .pay-sheet-close{
+    appearance:none;grid-column:2;grid-row:1 / span 3;align-self:center;justify-self:end;
+    box-sizing:border-box;width:44px;height:44px;margin:0;padding:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:0;border-radius:4px;background:transparent;color:var(--pine-ink);
+    cursor:pointer;line-height:1;
+  }
+  .pay-sheet-close:hover{background:rgba(243,239,226,.1)}
+  .pay-sheet-close:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+  .pay-sheet-close svg{width:18px;height:18px;display:block}
+  .pay-sheet-body{
+    flex:1 1 auto;min-height:0;min-width:0;position:relative;
+    overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    touch-action:pan-y;overscroll-behavior:contain;overscroll-behavior-x:none;
+    background:var(--surface);
+  }
+  .pay-sheet-loader{
+    position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+    background:var(--surface);pointer-events:none;
+  }
+  .pay-sheet-loader[hidden]{display:none !important}
+  .pay-sheet-spinner{
+    width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--gold);
+    border-radius:50%;animation:paySpin .7s linear infinite;
+  }
+  /* The iframe itself must not scroll. Cardknox's document is a few pixels wider
+     than the frame (hidden CVV tooltips; hCaptcha is 302px). On iOS Safari a
+     scrollable iframe pans sideways. Give the iframe the full form height and
+     let this wrapper be the only scroller, clipping any extra width. */
+  .pay-sheet-framewrap{
+    width:100%;max-width:100%;overflow:hidden;overflow-x:hidden;
+    touch-action:pan-y;overscroll-behavior-x:none;
+  }
+  #payFrame{
+    display:block;width:1px;min-width:100%;max-width:100%;
+    height:2300px;border:0;background:var(--surface);box-sizing:border-box;
+    overflow:hidden;touch-action:pan-y;
+  }
+  @media (min-width:700px){
+    .pay-sheet{align-items:center;padding:24px}
+    .pay-sheet-dialog{
+      width:min(620px,100%);max-width:620px;
+      height:min(900px, calc(100dvh - 48px));max-height:min(900px, calc(100dvh - 48px));
+      border-radius:8px;
+      transform:none;
+      animation:payModalIn .28s ease-out forwards;
+    }
+    .pay-sheet-head{padding-top:14px;border-radius:8px 8px 0 0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .pay-sheet-dialog,.pay-sheet-spinner{animation:none !important;transform:none}
+  }
 </style>
 </head>
 <body>
@@ -343,6 +424,33 @@
   </div>
 </footer>
 
+<div class="pay-sheet" id="payPanel" hidden>
+  <button type="button" class="pay-sheet-backdrop" id="payBackdrop" tabindex="-1" aria-label="Close payment"></button>
+  <div class="pay-sheet-dialog" role="dialog" aria-modal="true" aria-labelledby="paySheetTitle">
+    <header class="pay-sheet-head">
+      <div class="pay-sheet-brand">
+        <p class="pay-sheet-org" id="paySheetTitle">Aitz Chaim Kollel Network</p>
+        <p class="pay-sheet-amt" id="paySheetAmount">$500 / month</p>
+      </div>
+      <p class="pay-sheet-secure">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Secure payment
+      </p>
+      <button type="button" class="pay-sheet-close" id="payClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="pay-sheet-body">
+      <div class="pay-sheet-loader" id="payLoader">
+        <div class="pay-sheet-spinner" role="status" aria-label="Loading payment form"></div>
+      </div>
+      <div class="pay-sheet-framewrap">
+        <iframe id="payFrame" title="Cardknox payment form" allow="payment" scrolling="no" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   var BASE = "https://secure.cardknox.com/baisshalom";
   var CAMPAIGN = "Aitz Chaim Kollel Network";
@@ -384,6 +492,96 @@
       ? ("Partner · " + fmt(currentAmount) + (currentFreq === "month" ? " / month" : ""))
       : "Choose your partnership";
   }
+
+  var payStatePushed = false;
+  var payScrollY = 0;
+  var payLastFocus = null;
+
+  function payAmountLabel(){
+    return fmt(currentAmount) + (currentFreq === "month" ? " / month" : " one-time");
+  }
+  function openPayPanel(){
+    if (currentAmount <= 0) return;
+    var panel = document.getElementById("payPanel");
+    var frame = document.getElementById("payFrame");
+    var loader = document.getElementById("payLoader");
+    var amtEl = document.getElementById("paySheetAmount");
+    if (amtEl) amtEl.textContent = payAmountLabel();
+    if (loader) loader.hidden = false;
+    frame.src = btn.href;
+    panel.hidden = false;
+    payLastFocus = document.activeElement;
+    payScrollY = window.scrollY || 0;
+    document.body.classList.add("pay-open");
+    document.body.style.top = "-" + payScrollY + "px";
+    if (!payStatePushed){
+      try{ history.pushState({ paySheet: 1 }, "", "#pay"); }catch(e){}
+      payStatePushed = true;
+    }
+    var closeBtn = document.getElementById("payClose");
+    if (closeBtn) closeBtn.focus();
+  }
+  function closePayPanel(){
+    var panel = document.getElementById("payPanel");
+    if (!panel || panel.hidden){
+      payStatePushed = false;
+      return;
+    }
+    var frame = document.getElementById("payFrame");
+    var loader = document.getElementById("payLoader");
+    frame.src = "about:blank";
+    if (loader) loader.hidden = false;
+    panel.hidden = true;
+    document.body.classList.remove("pay-open");
+    document.body.style.top = "";
+    window.scrollTo(0, payScrollY);
+    var shouldBack = payStatePushed && history.state && history.state.paySheet;
+    payStatePushed = false;
+    if (shouldBack){
+      try{ history.back(); }catch(e){}
+    }
+    if (payLastFocus && typeof payLastFocus.focus === "function"){
+      try{ payLastFocus.focus(); }catch(e){}
+    }
+  }
+  btn.addEventListener("click", function(e){
+    e.preventDefault();
+    openPayPanel();
+  });
+  document.getElementById("payClose").addEventListener("click", closePayPanel);
+  var payBackdrop = document.getElementById("payBackdrop");
+  if (payBackdrop) payBackdrop.addEventListener("click", closePayPanel);
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") closePayPanel();
+  });
+  window.addEventListener("popstate", function(){
+    var panel = document.getElementById("payPanel");
+    if (panel && !panel.hidden){
+      payStatePushed = false;
+      closePayPanel();
+    }
+  });
+  document.getElementById("payFrame").addEventListener("load", function(){
+    var bodyEl = document.querySelector(".pay-sheet-body");
+    if (bodyEl) bodyEl.scrollTop = 0;
+    var frame = document.getElementById("payFrame");
+    var src = frame && (frame.getAttribute("src") || frame.src || "");
+    if (!src || src === "about:blank" || /about:blank/.test(src)) return;
+    var loader = document.getElementById("payLoader");
+    if (loader) loader.hidden = true;
+  });
+  window.addEventListener("message", function(e){
+    if (e.origin !== location.origin) return;
+    if (!e.data || e.data.type !== "aitz-chaim-thankyou") return;
+    var href = e.data.href;
+    try {
+      var u = new URL(href, location.href);
+      if (u.origin !== location.origin) return;
+      if (!/thank-you\.html$/i.test(u.pathname)) return;
+    } catch (err){ return; }
+    if (typeof closePayPanel === "function") closePayPanel();
+    location.href = href;
+  });
 
   freqBtns.forEach(function(b){
     b.addEventListener("click", function(){
