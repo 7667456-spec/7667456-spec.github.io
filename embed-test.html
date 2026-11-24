@@ -245,21 +245,31 @@
   .pay-sheet-close svg{width:18px;height:18px;display:block}
   .pay-sheet-body{
     flex:1 1 auto;min-height:0;min-width:0;position:relative;
-    overflow:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
-    background:var(--surface);overscroll-behavior:contain;
+    overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    touch-action:pan-y;overscroll-behavior:contain;overscroll-behavior-x:none;
+    background:var(--surface);
   }
   .pay-sheet-loader{
     position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
-    background:var(--surface);
+    background:var(--surface);pointer-events:none;
   }
   .pay-sheet-loader[hidden]{display:none !important}
   .pay-sheet-spinner{
     width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--gold);
     border-radius:50%;animation:paySpin .7s linear infinite;
   }
+  /* The iframe itself must not scroll. Cardknox's document is a few pixels wider
+     than the frame (hidden CVV tooltips; hCaptcha is 302px). On iOS Safari a
+     scrollable iframe pans sideways. Give the iframe the full form height and
+     let this wrapper be the only scroller, clipping any extra width. */
+  .pay-sheet-framewrap{
+    width:100%;max-width:100%;overflow:hidden;overflow-x:hidden;
+    touch-action:pan-y;overscroll-behavior-x:none;
+  }
   #payFrame{
-    display:block;width:1px;min-width:100%;max-width:100%;height:100%;min-height:100%;
-    border:0;background:var(--surface);box-sizing:border-box;
+    display:block;width:1px;min-width:100%;max-width:100%;
+    height:2300px;border:0;background:var(--surface);box-sizing:border-box;
+    overflow:hidden;touch-action:pan-y;
   }
   @media (min-width:700px){
     .pay-sheet{align-items:center;padding:24px}
@@ -437,7 +447,9 @@
       <div class="pay-sheet-loader" id="payLoader">
         <div class="pay-sheet-spinner" role="status" aria-label="Loading payment form"></div>
       </div>
-      <iframe id="payFrame" title="Cardknox payment form" allow="payment" src="about:blank"></iframe>
+      <div class="pay-sheet-framewrap">
+        <iframe id="payFrame" title="Cardknox payment form" allow="payment" scrolling="no" src="about:blank"></iframe>
+      </div>
     </div>
   </div>
 </div>
