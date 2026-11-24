@@ -219,6 +219,11 @@
   footer{border-top:1px solid var(--line);padding-block:30px 40px;text-align:center}
   footer .name{font-family:var(--display);font-size:17px;color:var(--ink);margin:0 0 4px}
   footer .name-he{font-family:var(--hebrew);font-size:17px;color:var(--gold-ink);margin:0 0 16px;direction:rtl}
+  footer .contact{margin:0;font-size:13.5px;color:var(--muted)}
+  footer .locs + .contact{margin-top:16px}
+  footer .contact a{color:var(--gold-ink);text-decoration:none;border-bottom:1px solid var(--gold-ink)}
+  footer .contact a:hover{color:var(--gold);border-bottom-color:var(--gold)}
+  footer .contact a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .locs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 28px;color:var(--muted);font-size:13.5px}
   .loc b{color:var(--ink);font-weight:600;font-family:var(--display);font-size:14px;display:block;margin-bottom:2px}
   .loc span{direction:rtl;display:inline-block}
@@ -453,6 +458,7 @@
       <div class="loc"><b>Beitar Illit</b><span>קדושת לוי 76, ביתר עילית</span></div>
       <div class="loc"><b>Beit Shemesh</b><span>מר עוקבא 20, בית שמש</span></div>
     </div>
+    <p class="contact">Contact: <a href="mailto:info@aitzchaimkollel.org">info@aitzchaimkollel.org</a></p>
   </div>
 </footer>
 

@@ -27,7 +27,7 @@
 <style>
   :root{
     --ink:#1E2742;--bg:#ECE8DC;--surface:#FBF9F2;--pine:#1F3061;--pine-ink:#F3EFE2;
-    --gold:#A9833A;--gold-bright:#B89247;--muted:#64636B;--line:rgba(28,30,50,.14);
+    --gold:#A9833A;--gold-bright:#B89247;--gold-ink:#7A5C1E;--muted:#64636B;--line:rgba(28,30,50,.14);
     --shadow:0 1px 2px rgba(20,28,55,.06),0 10px 30px rgba(20,28,55,.1);
     --display:"Marcellus","Spectral",Georgia,serif;
     --hebrew:"Frank Ruhl Libre","Spectral",Georgia,serif;
@@ -35,7 +35,7 @@
   }
   @media (prefers-color-scheme:dark){:root{
     --ink:#E8E9F2;--bg:#0D1018;--surface:#171C29;--pine:#2C3F79;--pine-ink:#EEF0F8;
-    --gold:#C7A24E;--gold-bright:#D4B15E;--muted:#9598A8;--line:rgba(232,233,242,.15);
+    --gold:#C7A24E;--gold-bright:#D4B15E;--gold-ink:#C7A24E;--muted:#9598A8;--line:rgba(232,233,242,.15);
     --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.45);color-scheme:dark;
   }}
   *{box-sizing:border-box}
@@ -64,6 +64,13 @@
   .bracha{font-style:italic;color:var(--pine);font-size:15px;line-height:1.65;margin:24px auto 0;max-width:36ch}
   @media (prefers-color-scheme:dark){.bracha{color:var(--gold-bright)}}
   .signature{font-family:var(--display);font-size:14px;color:var(--muted);margin:16px 0 0;line-height:1.4}
+  .inner{max-width:620px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  footer{border-top:1px solid var(--line);padding-block:30px 40px;text-align:center}
+  footer .contact{margin:0;font-size:13.5px;color:var(--muted)}
+  footer .locs + .contact{margin-top:16px}
+  footer .contact a{color:var(--gold-ink);text-decoration:none;border-bottom:1px solid var(--gold-ink)}
+  footer .contact a:hover{color:var(--gold);border-bottom-color:var(--gold)}
+  footer .contact a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:wght@400;500&family=Frank+Ruhl+Libre:wght@500&display=swap">
@@ -92,6 +99,12 @@
     <a class="back" id="backLink" href="#">Return to the kollel</a>
   </div>
 </div>
+
+<footer>
+  <div class="inner">
+    <p class="contact">Contact: <a href="mailto:info@aitzchaimkollel.org">info@aitzchaimkollel.org</a></p>
+  </div>
+</footer>
 
 <script>
   /* ============================================================
